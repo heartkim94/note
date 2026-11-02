@@ -69,7 +69,7 @@ skills = [ 'javascript' 'python' 'rust' ]
 
 Bare keys can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
-Dot keys (`.`) start with `.` and read a single key until following whitespace or `[ ] { } < > = ;`.
+Dot keys (`.`) start with `.` and read a single key until following whitespace or `[ ] < > = ;`.
 
 Quoted keys (`' '`, `" "`) can contain whitespace, reserved characters, and reserved words.
 
@@ -161,7 +161,7 @@ two_objs = [ ; ; ]   {{ JSON: [{}, {}] }}
 
 Unquoted and multi-line strings are raw strings.
 
-* **Word String (`>`)**: Reads a word until following whitespace or `[ ] { } < > ;`. Trimmed on both sides.
+* **Word String (`>`)**: Reads a word until following whitespace or `[ ] < > ;`. Trimmed on both sides.
 * **Line String (`>>`)**: Reads until the end of the line (`\n`) or a comment (`{ }`). Trimmed on both sides.
 * **Multi-line String (`<tag> ... <tag>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
 * **`<tag>`**: Can be empty (`<>`) or contain any character except whitespace and `< >` (e.g., `<sql>`, `<md>`, `<##>`).
