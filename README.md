@@ -67,20 +67,26 @@ skills = [ 'javascript' 'python' 'rust' ]
 
 ### ② Keys
 
-Bare keys can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`).
+Bare keys can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
-For keys containing whitespace, reserved characters, or matching numbers or reserved words (`true`, `false`, `nil`), quoted keys must be used.
+Dot keys (`.`) start with `.` and read a single key until following whitespace or `[ ] { } < > = ;`.
+
+Quoted keys (`' '`, `" "`) can contain whitespace, reserved characters, and reserved words.
 
 ```text
 { Bare keys }
 app_version = '2.4.0'
 _internal_id = 101
-1st_tier = true
 service-node-01 = 'active'
 
+{ Dot keys (.) }
+.1st_tier = true
+.v1.0.alpha = 'released'  { 'v1.0.alpha' = 'released' }
+..gitignore = true        { '.gitignore' = true }
+
 { Quoted keys }
-'v1.0.alpha' = 'released'
 "user's choice" = 'dark'
+'env=prod' = true
 ```
 
 ### ③ Implicit Root
@@ -97,9 +103,9 @@ version = 1.0
 'second item'
 ```
 
-### ④ Dotted Keys
+### ④ Key Paths
 
-Keys within nested objects can be represented in a single line using the dot (`.`).
+Keys within nested objects can be represented in a single line by joining bare or quoted keys directly with a dot (`.`) without whitespace.
 
 Missing or non-object keys are automatically created as empty objects.
 
@@ -114,7 +120,7 @@ db.host = 'localhost'                  { db=[ port=5432 host='localhost' ] }
 timeout = 5000
 timeout.connect = 3000                 { timeout=[ connect=3000 ] }
 
-{ Dotted keys with quoted keys }
+{ Key paths with quoted keys }
 project.'v1.0.alpha'.status = 'active' { project=[ 'v1.0.alpha'=[ status='active' ] ] }
 app."user's choice".theme = 'dark'     { app=[ "user's choice"=[ theme='dark' ] ] }
 ```
