@@ -69,7 +69,7 @@ skills = [ 'javascript' 'python' 'rust' ]
 
 Bare keys can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
-Dot keys (`.`) start with `.` and read a single key until following whitespace or `[ ] < > = ;`.
+Dot keys (`.`) start with `.` and read a single key until following whitespace or `=`.
 
 Quoted keys (`' '`, `" "`) can contain whitespace, reserved characters, and reserved words.
 
