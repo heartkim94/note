@@ -65,7 +65,30 @@ user = [ name='John Doe' occupation='Developer' ]
 skills = [ 'javascript' 'python' 'rust' ]
 ```
 
-### ② Keys
+### ② Empty Structures
+
+Empty arrays and objects are denoted as follows:
+
+```text
+arr = [ ]   { JSON: [] }
+obj = [=]   {{ JSON: {} }}
+```
+
+### ③ Implicit Root
+
+The root `[ ]` is omitted and implicitly treated as `[ ... ]`. The root type is determined by the format of the internal content (an empty file evaluates to an empty array `[]`).
+
+```text
+{ Implicit object root }
+name = 'Project A'
+version = 1.0
+
+{ Implicit array root }
+'first item'
+'second item'
+```
+
+### ④ Keys
 
 Bare keys can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
@@ -89,21 +112,7 @@ service-node-01 = 'active'
 'env=prod' = true
 ```
 
-### ③ Implicit Root
-
-The root `[ ]` is omitted and implicitly treated as `[ ... ]`. The root type is determined by the format of the internal content (an empty file evaluates to an empty array `[]`).
-
-```text
-{ Implicit object root }
-name = 'Project A'
-version = 1.0
-
-{ Implicit array root }
-'first item'
-'second item'
-```
-
-### ④ Key Paths
+### ⑤ Key Paths
 
 Keys within nested objects can be represented in a single line by joining bare or quoted keys directly with a dot (`.`) without whitespace.
 
@@ -125,15 +134,26 @@ project.'v1.0.alpha'.status = 'active' { project=[ 'v1.0.alpha'=[ status='active
 app."user's choice".theme = 'dark'     { app=[ "user's choice"=[ theme='dark' ] ] }
 ```
 
-### ⑤ Objects in Arrays
+### ⑥ Objects in Arrays
 
 Within an array, a semicolon (`;`) starts an object without nested brackets, grouping subsequent `key=value` pairs until the next `;`, standalone value, or `]`.
+
+A `;` object can start with a name key, wrapping subsequent `key=value` pairs under that key.
+
+A `;` object must contain at least a name key or a `key=value` pair.
 
 ```text
 { Array of objects }
 employees = [
   ; id=101 name='Alice' department='Design'
   ; id=102 name='Bob'   department='Engineering'
+]
+
+{ Named objects in arrays }
+steps = [
+  ; connect host='localhost' port=5432  { [ connect=[ host='localhost' port=5432 ] ] }
+  ; auth.login user='admin'             { [ auth=[ login=[ user='admin' ] ] ] }
+  ; disconnect                          { [ disconnect=[=] ] }
 ]
 
 { Objects with other values }
@@ -143,18 +163,6 @@ tasks = [
   '--- separator ---'
   ; id=2 title='Feedback Loop' status='pending'
 ]
-```
-
-### ⑥ Empty Structures
-
-Empty arrays and objects are denoted as follows:
-
-```text
-arr = [ ]            { JSON: [] }
-obj = [=]            {{ JSON: {} }}
-
-obj_arr  = [;]       {{ JSON: [{}] }}
-two_objs = [ ; ; ]   {{ JSON: [{}, {}] }}
 ```
 
 ### ⑦ Unquoted & Multi-line Strings
@@ -238,6 +246,11 @@ Supports the same data types as JSON.
     "environment": "production",
     "version": "2.4.0"
   },
+  "services": {
+    "auth": { "enabled": true, "provider": "oidc" },
+    "storage": { "bucket": "assets", "region": "us-east-1" }
+  },
+  "features": ["caching", "logging", "monitoring"],
   "database": {
     "main": { "host": "10.0.0.1", "port": 5432 },
     "replicas": [
@@ -245,11 +258,11 @@ Supports the same data types as JSON.
       { "host": "10.0.0.3", "port": 5432, "active": false }
     ]
   },
-  "services": {
-    "auth": { "enabled": true, "provider": "oidc" },
-    "storage": { "bucket": "assets", "region": "us-east-1" }
-  },
-  "features": ["caching", "logging", "monitoring"]
+  "middlewares": [
+    { "cors": {} },
+    { "rate_limit": { "max": 100, "window": 60 } },
+    { "cache": { "ttl": 300 } }
+  ]
 }
 ```
 
@@ -262,16 +275,22 @@ project = [
   version => 2.4.0
 ]
 
+services.auth = [ enabled=true provider=>oidc ]
+services.storage = [ bucket=>assets region=>us-east-1 ]
+
+features = [ >caching >logging >monitoring ]
+
 database.main = [ host=>10.0.0.1 port=5432 ]
 database.replicas = [
   ; host=>10.0.0.2 port=5432 active=true
   ; host=>10.0.0.3 port=5432 active=false
 ]
 
-services.auth = [ enabled=true provider=>oidc ]
-services.storage = [ bucket=>assets region=>us-east-1 ]
-
-features = [ >caching >logging >monitoring ]
+middlewares = [
+  ; cors
+  ; rate_limit max=100 window=60
+  ; cache      ttl=300
+]
 ```
 
 ### ② Log Data
