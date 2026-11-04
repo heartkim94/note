@@ -161,12 +161,8 @@ steps = [
 ]
 
 { Objects with other values }
-tasks = [
-  'Task List Start'
-  ; id=1 title='Initial Design' status=done
-  '--- separator ---'
-  ; id=2 title='Feedback Loop' status=pending
-]
+event = [ notify ; level=warn sound=true 'Disk space is low' ]
+  { [ notify [ level=warn sound=true ] 'Disk space is low' ] }
 ```
 
 ### ⑦ Line & Multi-line Strings
@@ -427,3 +423,67 @@ cells = [
       <py>
 ]
 ````
+
+### ⑤ Rich Text
+
+**article.json**
+
+```json
+{
+  "title": "Cloud Mesh v2.4 Release Notes",
+  "author": "dev-team",
+  "tags": ["release", "proxy", "performance"],
+  "body": [
+    ["h2", "1. Highlights"],
+    [
+      "p",
+      "This release significantly reduces memory overhead in the routing engine. ",
+      "Target version ",
+      ["badge", { "color": "blue" }, "2.4.0"],
+      " will be rolled out across ",
+      ["b", 12],
+      " nodes with zero downtime."
+    ],
+    [
+      "callout",
+      { "type": "warning", "title": "Migration Notice" },
+      [
+        "p",
+        "Legacy config files (",
+        ["code", ".mesh.conf"],
+        ") are ",
+        ["del", "deprecated"],
+        " and will be migrated automatically on startup."
+      ],
+      [
+        "p",
+        "Please refer to the ",
+        ["a", { "href": "https://example.com/guide", "target": "_blank" }, "migration guide"],
+        " for details."
+      ]
+    ]
+  ]
+}
+```
+
+**article.note**
+
+```text
+title  => Cloud Mesh v2.4 Release Notes
+author = dev-team
+tags   = [ release proxy performance ]
+
+body = [
+  [ h2 '1. Highlights' ]
+
+  [ p
+    'This release significantly reduces memory overhead in the routing engine. '
+    'Target version ' [badge ;color=blue .2.4.0] ' will be rolled out across ' [b 12] ' nodes with zero downtime.'
+  ]
+
+  [ callout ; type=warning title='Migration Notice'
+    [ p 'Legacy config files (' [code '.mesh.conf'] ') are ' [del 'deprecated'] ' and will be migrated automatically on startup.' ]
+    [ p 'Please refer to the ' [a ;href=.https://example.com/guide target=_blank 'migration guide'] ' for details.' ]
+  ]
+]
+```
