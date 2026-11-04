@@ -92,7 +92,7 @@ version = 1.0
 
 ### ④ Keys
 
-Strings can be used for keys.
+Bare, dot (`.`), and quoted (`' '`, `" "`) strings can be used as keys.
 
 Bare strings can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
@@ -167,7 +167,7 @@ event = [ notify ; level=warn sound=true 'Disk space is low' ]
 
 ### ⑦ Line & Multi-line Strings
 
-Line (`>`) and multi-line (`<tag>`) strings are raw strings.
+Line (`>`) and multi-line (`<tag>`) strings are raw strings used for values.
 
 * **Line String (`>`)**: Reads until the end of the line (`\n`). Trimmed on both sides.
 * **Multi-line String (`<tag> ... <tag>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
