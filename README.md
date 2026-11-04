@@ -12,23 +12,25 @@ An easy-to-read, easy-to-write data format with JSON compatibility.
 { Application & Server Configuration }
 app = [
   name        = 'Cloud Mesh'
-  version     => 2.4.0
-  description =>> Lightweight service proxy
+  environment = production
+  version     = .2.4.0
+  description => Lightweight service proxy
   debug       = false
 ]
 
-server.host => 0.0.0.0
+server.host = .0.0.0.0
 server.port = 8080        { Default HTTP port }
 
-features = [ >caching >logging >monitoring ]
+features = [ caching logging monitoring ]
 
 replicas = [
-  ; host   => 10.0.0.2
-    role   => primary
-    active = true
-  ; host   => 10.0.0.3
-    role   => backup
-    active = false
+  ; host=.10.0.0.2 port=5432 active=true
+  ; host=.10.0.0.3 port=5432 active=false
+]
+
+middlewares = [
+  ; cors
+  ; rate_limit max=100 window=60
 ]
 
 health_check.query = <sql>
@@ -43,7 +45,7 @@ health_check.query = <sql>
 
 * **JSON Compatible**: Shares the same data types and structures as JSON, making it easy to adopt where JSON is used.
 
-* **Minimal Keystrokes**: Eliminates commas (`,`), reduces closing quotes (`>`, `>>`) and nested brackets (`;`, `.`), and requires no Shift key for core structural symbols (`[ ]`, `=`, `;`, `.`).
+* **Minimal Keystrokes**: Eliminates commas (`,`), reduces quotes (bare strings, `.`, `>`) and nested brackets (`;`, `.`), and requires no Shift key for core structural symbols (`[ ]`, `=`, `;`, `.`).
 
 * **Comments & Multi-line Strings**: Supports inline and block comments (`{ }`) and raw multi-line strings (`<tag>`).
 
@@ -90,11 +92,13 @@ version = 1.0
 
 ### ④ Keys
 
-Bare keys can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
+Strings can be used for keys.
 
-Dot keys (`.`) start with `.` and read a single key until following whitespace or `=`.
+Bare strings can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
-Quoted keys (`' '`, `" "`) can contain whitespace, reserved characters, and reserved words.
+Dot strings (`.`) start with `.` and read a single word as a raw string until following whitespace or `[ ] = ;`.
+
+Quoted strings (`' '`, `" "`) can contain whitespace, reserved characters, and reserved words.
 
 ```text
 { Bare keys }
@@ -122,16 +126,16 @@ If already an object, keys are added or overwritten.
 
 ```text
 { Automatic creation and merging }
-db.port = 5432                         { db=[ port=5432 ] }
-db.host = 'localhost'                  { db=[ port=5432 host='localhost' ] }
+db.port = 5432                       { db=[ port=5432 ] }
+db.host = localhost                  { db=[ port=5432 host=localhost ] }
 
 { Overwriting non-object values }
 timeout = 5000
-timeout.connect = 3000                 { timeout=[ connect=3000 ] }
+timeout.connect = 3000               { timeout=[ connect=3000 ] }
 
 { Key paths with quoted keys }
-project.'v1.0.alpha'.status = 'active' { project=[ 'v1.0.alpha'=[ status='active' ] ] }
-app."user's choice".theme = 'dark'     { app=[ "user's choice"=[ theme='dark' ] ] }
+project.'v1.0.alpha'.status = active { project=[ 'v1.0.alpha'=[ status=active ] ] }
+app."user's choice".theme = dark     { app=[ "user's choice"=[ theme=dark ] ] }
 ```
 
 ### ⑥ Objects in Arrays
@@ -145,51 +149,44 @@ A `;` object must contain at least a name key or a `key=value` pair.
 ```text
 { Array of objects }
 employees = [
-  ; id=101 name='Alice' department='Design'
-  ; id=102 name='Bob'   department='Engineering'
+  ; id=101 name=Alice department=Design
+  ; id=102 name=Bob   department=Engineering
 ]
 
 { Named objects in arrays }
 steps = [
-  ; connect host='localhost' port=5432  { [ connect=[ host='localhost' port=5432 ] ] }
-  ; auth.login user='admin'             { [ auth=[ login=[ user='admin' ] ] ] }
-  ; disconnect                          { [ disconnect=[=] ] }
+  ; connect host=localhost port=5432  { [ connect=[ host=localhost port=5432 ] ] }
+  ; auth.login user=admin             { [ auth=[ login=[ user=admin ] ] ] }
+  ; disconnect                        { [ disconnect=[=] ] }
 ]
 
 { Objects with other values }
 tasks = [
   'Task List Start'
-  ; id=1 title='Initial Design' status='done'
+  ; id=1 title='Initial Design' status=done
   '--- separator ---'
-  ; id=2 title='Feedback Loop' status='pending'
+  ; id=2 title='Feedback Loop' status=pending
 ]
 ```
 
-### ⑦ Unquoted & Multi-line Strings
+### ⑦ Line & Multi-line Strings
 
-Unquoted and multi-line strings are raw strings.
+Line (`>`) and multi-line (`<tag>`) strings are raw strings.
 
-* **Word String (`>`)**: Reads a word until following whitespace or `[ ] < > ;`. Trimmed on both sides.
-* **Line String (`>>`)**: Reads until the end of the line (`\n`). Trimmed on both sides.
+* **Line String (`>`)**: Reads until the end of the line (`\n`). Trimmed on both sides.
 * **Multi-line String (`<tag> ... <tag>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
 * **`<tag>`**: Can be empty (`<>`) or contain any character except whitespace and `< >` (e.g., `<sql>`, `<md>`, `<##>`).
 
 ```text
-{ Word string (>) and Line string (>>) }
-path   => C:\Users\admin\config.note
-tags   = [ >web >api >cloud ]
-notice =>> [Urgent] Maintenance at 02:00; please save your work.
+{ Line string (>) }
+notice => Maintenance starts at 02:00. Please save your work.
+format => [{time}] {level}: {message} (user={user}; ip={ip})
 
 { Multi-line string (<tag>) }
 message = <>
   Hello, World!
   Welcome to Note.
   <>
-
-banner = <##>
-  <> Production API Server <>
-  Status: Online (v2.4.0)
-  <##>
 
 query = <sql>
   SELECT id, name FROM users
@@ -204,12 +201,12 @@ Inline and block comments use `{ }`, allowing variable-length braces (e.g., `{{ 
 
 ```text
 { Inline and single-line comments }
-host => localhost
+host = localhost
 port = 8080          { Default HTTP port }
 
 {
 Block comment:
-host => api.production-site.com
+host = .api.production-site.com
 port = 443
 }
 
@@ -220,7 +217,7 @@ port = 443
 
 Supports the same data types as JSON.
 
-* **String**: `' '`, `" "`, `>`, `>>`, `<tag>`
+* **String**: Bare, `.`, `' '`, `" "`, `>`, `<tag>`
   * Quoted strings (`' '`, `" "`) support escape sequences: `\n`, `\t`, `\r`, `\b`, `\f`, `\'`, `\"`, `\\`, and `\u{x...}` (e.g., `\u{41}`, `\u{1F600}`).
 
 * **Number**: `1024`, `100_000`, `3.14`, `-5`, `1.2e-3`
@@ -271,19 +268,19 @@ Supports the same data types as JSON.
 ```text
 project = [
   name = 'Cloud Mesh'
-  environment => production
-  version => 2.4.0
+  environment = production
+  version = .2.4.0
 ]
 
-services.auth = [ enabled=true provider=>oidc ]
-services.storage = [ bucket=>assets region=>us-east-1 ]
+services.auth = [ enabled=true provider=oidc ]
+services.storage = [ bucket=assets region=us-east-1 ]
 
-features = [ >caching >logging >monitoring ]
+features = [ caching logging monitoring ]
 
-database.main = [ host=>10.0.0.1 port=5432 ]
+database.main = [ host=.10.0.0.1 port=5432 ]
 database.replicas = [
-  ; host=>10.0.0.2 port=5432 active=true
-  ; host=>10.0.0.3 port=5432 active=false
+  ; host=.10.0.0.2 port=5432 active=true
+  ; host=.10.0.0.3 port=5432 active=false
 ]
 
 middlewares = [
@@ -308,45 +305,40 @@ middlewares = [
 **logs.note**
 
 ```text
-; id=1 level=>info  msg='Server started'
-; id=2 level=>warn  msg='High memory usage'
-; id=3 level=>error msg='Database connection failed'
-; id=4 level=>info  msg='User logout'
-; id=5 level=>debug msg='Cache cleared'
+; id=1 level=info  msg='Server started'
+; id=2 level=warn  msg='High memory usage'
+; id=3 level=error msg='Database connection failed'
+; id=4 level=info  msg='User logout'
+; id=5 level=debug msg='Cache cleared'
 ```
 
-### ③ Recursive Structures
+### ③ Menus
 
 **menu.json**
 
 ```json
 {
-  "title": "Documentation",
+  "title": "Main Menu",
   "items": [
     {
-      "title": "Getting Started",
-      "path": "/intro"
-    },
-    {
-      "title": "Guides",
+      "label": "File",
       "items": [
+        { "label": "New File", "command": "file.new", "shortcut": "Ctrl+N" },
+        { "label": "Save", "command": "file.save", "shortcut": "Ctrl+S" },
         {
-          "title": "Installation",
-          "path": "/guides/install"
-        },
-        {
-          "title": "Advanced",
+          "label": "Export",
           "items": [
-            {
-              "title": "Plugins",
-              "path": "/guides/plugins"
-            },
-            {
-              "title": "Security",
-              "path": "/guides/security"
-            }
+            { "label": "PDF", "command": "export.pdf" },
+            { "label": "HTML", "command": "export.html" }
           ]
         }
+      ]
+    },
+    {
+      "label": "Help",
+      "items": [
+        { "label": "Documentation", "url": "/docs" },
+        { "label": "About", "command": "app.about" }
       ]
     }
   ]
@@ -356,56 +348,82 @@ middlewares = [
 **menu.note**
 
 ```text
-title => Documentation
+title = 'Main Menu'
 items = [
-  ; title = 'Getting Started'
-    path  => /intro
-  ; title => Guides
+  ; label = File
     items = [
-      ; title => Installation
-        path  => /guides/install
-      ; title => Advanced
+      ; label='New File' command=.file.new  shortcut=Ctrl+N
+      ; label=Save       command=.file.save shortcut=Ctrl+S
+      ; label = Export
         items = [
-          ; title => Plugins
-            path  => /guides/plugins
-          ; title => Security
-            path  => /guides/security
+          ; label=PDF  command=.export.pdf
+          ; label=HTML command=.export.html
         ]
+    ]
+  ; label = Help
+    items = [
+      ; label=Documentation url=/docs
+      ; label=About         command=.app.about
     ]
 ]
 ```
 
 ### ④ Documents
 
-**docs.json**
+**notebook.ipynb**
 
 ```json
 {
-  "title": "Cloud Mesh",
-  "version": "2.4.0",
-  "overview": "# Overview\n**Cloud Mesh** is a lightweight service proxy.",
-  "quickstart": "# Quick Start\n1. Install the CLI tool.\n2. Run the command:\n\n```bash\nmesh start --port 8080\n```"
+  "nbformat": 4,
+  "nbformat_minor": 5,
+  "metadata": {
+    "kernel": "python3"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": "# Data Analysis\nInstall the required package:\n\n```bash\npip install pandas\n```"
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {},
+      "outputs": [],
+      "source": "import pandas as pd\n\ndf = pd.read_csv(\"users.csv\")\nprint(df.head())"
+    }
+  ]
 }
 ```
 
-**docs.note**
+**notebook.note**
 
 ````text
-title   = 'Cloud Mesh'
-version => 2.4.0
+nbformat = 4
+nbformat_minor = 5
+metadata.kernel = python3
 
-overview = <md>
-  # Overview
-  **Cloud Mesh** is a lightweight service proxy.
-  <md>
+cells = [
+  ; cell_type = markdown
+    metadata  = [=]
+    source    = <md>
+      # Data Analysis
+      Install the required package:
 
-quickstart = <md>
-  # Quick Start
-  1. Install the CLI tool.
-  2. Run the command:
+      ```bash
+      pip install pandas
+      ```
+      <md>
 
-  ```bash
-  mesh start --port 8080
-  ```
-  <md>
+  ; cell_type       = code
+    execution_count = 1
+    metadata        = [=]
+    outputs         = [ ]
+    source          = <py>
+      import pandas as pd
+
+      df = pd.read_csv("users.csv")
+      print(df.head())
+      <py>
+]
 ````
