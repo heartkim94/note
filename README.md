@@ -49,7 +49,7 @@ health_check.query = <sql>
 
 * **Minimal Keystrokes**: Eliminates commas (`,`), reduces quotes (bare strings, `.`, `>`) and nested brackets (`;`, `.`), and requires no Shift key for core structural symbols (`[ ]`, `=`, `;`, `.`).
 
-* **Comments & Multi-line Strings**: Supports inline and block comments (`{ }`) and raw multi-line strings (`<tag>`).
+* **Comments & Multi-line Strings**: Supports inline and block comments (`{ }`) and raw multi-line strings (`<word>`).
 
 ## 2. Syntax
 
@@ -174,18 +174,20 @@ stage = [ build
 
 ### ⑦ Line & Multi-line Strings
 
-Line (`>`) and multi-line (`<tag>`) strings are raw strings used for values.
+Line (`>`) and multi-line (`<word>`) strings are raw strings used for values.
 
 * **Line String (`>`)**: Reads until the end of the line (`\n`). Trimmed on both sides.
-* **Multi-line String (`<tag> ... <tag>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
-* **`<tag>`**: Can be empty (`<>`) or contain any character except whitespace and `< >` (e.g., `<sql>`, `<md>`, `<##>`).
+* **Multi-line String (`<word> ... <word>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
+* **`<word>`**: Can be empty (`<>`) or contain any character except whitespace and `< >` (e.g., `<sql>`, `<md>`, `<##>`).
 
 ```text
 { Line string (>) }
 notice => Maintenance starts at 02:00. Please save your work.
 format => [{time}] {level}: {message} (user={user}; ip={ip})
 
-{ Multi-line string (<tag>) }
+{ Multi-line string (<word>) }
+quote = <>He said, "It's working!"<>
+
 message = <>
   Hello, World!
   Welcome to Note.
@@ -220,7 +222,7 @@ port = 443
 
 Supports the same data types as JSON.
 
-* **String**: Bare, `.`, `' '`, `" "`, `>`, `<tag>`
+* **String**: Bare, `.`, `' '`, `" "`, `>`, `<word>`
   * Quoted strings (`' '`, `" "`) support escape sequences: `\n`, `\t`, `\r`, `\b`, `\f`, `\'`, `\"`, `\\`, and `\u{x...}` (e.g., `\u{41}`, `\u{1F600}`).
 
 * **Number**: `1024`, `100_000`, `3.14`, `-5`, `1.2e-3`
@@ -372,66 +374,6 @@ items = [
 ```
 
 ### ④ Documents
-
-**notebook.ipynb**
-
-```json
-{
-  "nbformat": 4,
-  "nbformat_minor": 5,
-  "metadata": {
-    "kernel": "python3"
-  },
-  "cells": [
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": "# Data Analysis\nInstall the required package:\n\n```bash\npip install pandas\n```"
-    },
-    {
-      "cell_type": "code",
-      "execution_count": 1,
-      "metadata": {},
-      "outputs": [],
-      "source": "import pandas as pd\n\ndf = pd.read_csv(\"users.csv\")\nprint(df.head())"
-    }
-  ]
-}
-```
-
-**notebook.note**
-
-````text
-nbformat = 4
-nbformat_minor = 5
-metadata.kernel = python3
-
-cells = [
-  ; cell_type = markdown
-    metadata  = [=]
-    source    = <md>
-      # Data Analysis
-      Install the required package:
-
-      ```bash
-      pip install pandas
-      ```
-      <md>
-
-  ; cell_type       = code
-    execution_count = 1
-    metadata        = [=]
-    outputs         = [ ]
-    source          = <py>
-      import pandas as pd
-
-      df = pd.read_csv("users.csv")
-      print(df.head())
-      <py>
-]
-````
-
-### ⑤ Rich Text
 
 **article.json**
 
