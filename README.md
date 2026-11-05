@@ -436,61 +436,75 @@ cells = [
 **article.json**
 
 ```json
-{
-  "title": "Cloud Mesh v2.4 Release Notes",
-  "author": "dev-team",
-  "tags": ["release", "proxy", "performance"],
-  "body": [
-    ["h2", "1. Highlights"],
+[
+  "article",
+  ["h1", "Configuration Guide"],
+  [
+    "p",
+    "When the server starts, it automatically looks for a ",
+    ["code", "config.note"],
+    " file in the working directory and falls back to built-in defaults if none is found."
+  ],
+  ["h2", "Environment Overrides"],
+  [
+    "p",
+    "Any setting can be overridden at runtime using environment variables. For example, setting ",
+    ["code", "PORT=9000"],
+    " overrides the default port ",
+    ["b", "8080"],
+    " without modifying the file."
+  ],
+  [
+    "p",
+    "Log levels accept ",
+    ["code", "debug"],
+    " or ",
+    ["code", "info"],
+    ", and relative file paths are resolved from the directory containing the configuration file."
+  ],
+  [
+    "blockquote",
     [
       "p",
-      "This release significantly reduces memory overhead in the routing engine. ",
-      "Target version ",
-      ["badge", { "color": "blue" }, "2.4.0"],
-      " will be rolled out across ",
-      ["b", 12],
-      " nodes with zero downtime."
-    ],
-    [
-      "callout",
-      { "type": "warning", "title": "Migration Notice" },
-      [
-        "p",
-        "Legacy config files (",
-        ["code", ".mesh.conf"],
-        ") are ",
-        ["del", "deprecated"],
-        " and will be migrated automatically on startup."
-      ],
-      [
-        "p",
-        "Please refer to the ",
-        ["a", { "href": "https://example.com/guide", "target": "_blank" }, "migration guide"],
-        " for details."
-      ]
+      "Sensitive credentials such as database passwords should ",
+      ["em", "never"],
+      " be committed to version control. Refer to the ",
+      ["a", { "href": "https://example.com/security", "target": "_blank" }, "security handbook"],
+      " for secret management."
     ]
   ]
-}
+]
 ```
 
 **article.note**
 
 ```text
-title  => Cloud Mesh v2.4 Release Notes
-author = dev-team
-tags   = [ release proxy performance ]
+article
 
-body = [
-  [ h2 '1. Highlights' ]
+[ h1 'Configuration Guide' ]
 
+[ p
+  'When the server starts, it automatically looks for a ' [code .config.note]
+  ' file in the working directory and falls back to built-in defaults if none is found.'
+]
+
+[ h2 'Environment Overrides' ]
+
+[ p
+  'Any setting can be overridden at runtime using environment variables. For example, setting '
+  [code 'PORT=9000'] ' overrides the default port ' [b .8080] ' without modifying the file.'
+]
+
+[ p
+  'Log levels accept ' [code debug] ' or ' [code info]
+  ', and relative file paths are resolved from the directory containing the configuration file.'
+]
+
+[ blockquote
   [ p
-    'This release significantly reduces memory overhead in the routing engine. '
-    'Target version ' [badge ;color=blue .2.4.0] ' will be rolled out across ' [b 12] ' nodes with zero downtime.'
-  ]
-
-  [ callout ; type=warning title='Migration Notice'
-    [ p 'Legacy config files (' [code '.mesh.conf'] ') are ' [del 'deprecated'] ' and will be migrated automatically on startup.' ]
-    [ p 'Please refer to the ' [a ;href=.https://example.com/guide target=_blank 'migration guide'] ' for details.' ]
+    'Sensitive credentials such as database passwords should ' [em 'never']
+    ' be committed to version control. Refer to the '
+    [a ;href=.https://example.com/security target=_blank 'security handbook'] ' for secret management.'
   ]
 ]
 ```
