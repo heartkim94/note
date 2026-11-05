@@ -444,7 +444,7 @@ article
 
 [ blockquote
   [ p
-    'Sensitive credentials such as database passwords should ' [em 'never']
+    'Sensitive credentials such as database passwords should ' [em never]
     ' be committed to version control. Refer to the '
     [a ;href=.https://example.com/security target=_blank 'security handbook'] ' for secret management.'
   ]
