@@ -28,10 +28,12 @@ replicas = [
   ; host=.10.0.0.3 port=5432 active=false
 ]
 
-middlewares = [
-  ; cors
-  ; rate_limit max=100 window=60
+routes = [
+  [ /api    ; auth mode=jwt  ; proxy to=backend ]
+  [ /static ; cache ttl=3600 ; file_server root=/var/www ]
 ]
+
+fallback = [ respond ; status=503 'Service temporarily unavailable' ]
 
 health_check.query = <sql>
   SELECT id, status FROM nodes
@@ -160,9 +162,14 @@ steps = [
   ; disconnect                        { [ disconnect=[=] ] }
 ]
 
-{ Objects with other values }
+{ Objects with standalone values }
 event = [ notify ; level=warn sound=true 'Disk space is low' ]
-  { [ notify [ level=warn sound=true ] 'Disk space is low' ] }
+
+stage = [ build
+  ; checkout
+  ; run cmd='npm ci'
+  ; run cmd='npm test'
+]
 ```
 
 ### ⑦ Line & Multi-line Strings
