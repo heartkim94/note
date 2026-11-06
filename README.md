@@ -165,10 +165,12 @@ steps = [
 { Objects with standalone values }
 event = [ notify ; level=warn sound=true 'Disk space is low' ]
 
-stage = [ build
-  ; checkout
-  ; run cmd='npm ci'
-  ; run cmd='npm test'
+stages = [
+  [ build
+    ; checkout
+    ; run cmd='npm ci'
+    ; run cmd='npm test'
+  ]
 ]
 ```
 
