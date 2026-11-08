@@ -302,21 +302,21 @@ middlewares = [
 **logs.jsonl**
 
 ```json
-{"id": 1, "level": "info", "msg": "Server started"}
-{"id": 2, "level": "warn", "msg": "High memory usage"}
-{"id": 3, "level": "error", "msg": "Database connection failed"}
-{"id": 4, "level": "info", "msg": "User logout"}
-{"id": 5, "level": "debug", "msg": "Cache cleared"}
+{"time": "2026-11-08T16:00:00", "level": "info", "msg": "Server started"}
+{"time": "2026-11-08T16:00:05", "level": "warn", "msg": "High memory usage"}
+{"time": "2026-11-08T16:00:10", "level": "error", "msg": "Database connection failed"}
+{"time": "2026-11-08T16:00:15", "level": "info", "msg": "User logout"}
+{"time": "2026-11-08T16:00:20", "level": "debug", "msg": "Cache cleared"}
 ```
 
 **logs.note**
 
 ```text
-; id=1 level=info  msg='Server started'
-; id=2 level=warn  msg='High memory usage'
-; id=3 level=error msg='Database connection failed'
-; id=4 level=info  msg='User logout'
-; id=5 level=debug msg='Cache cleared'
+; time=.2026-11-08T16:00:00 level=info  msg='Server started'
+; time=.2026-11-08T16:00:05 level=warn  msg='High memory usage'
+; time=.2026-11-08T16:00:10 level=error msg='Database connection failed'
+; time=.2026-11-08T16:00:15 level=info  msg='User logout'
+; time=.2026-11-08T16:00:20 level=debug msg='Cache cleared'
 ```
 
 ### ③ Menus
