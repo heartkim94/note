@@ -232,7 +232,7 @@ lines = [
   lines }]second part
   []    indented line
 ]
-{ [ 'First part ' 'second part' '\n' [ ] '    indented line' ] }
+{ [ 'First part ' 'second part' '\n' '    indented line' ] }
 ```
 
 ### 2.9 Comments
