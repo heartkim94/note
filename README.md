@@ -67,18 +67,13 @@ user = [ name='John Doe' occupation='Developer' ]
 
 { Array }
 skills = [ 'javascript' 'python' 'rust' ]
-```
 
-### 2.2 Empty Structures
-
-Empty arrays and objects are denoted as follows:
-
-```text
+{ Empty structures }
 arr = [ ]   { JSON: [] }
 obj = [=]   {{ JSON: {} }}
 ```
 
-### 2.3 Implicit Root
+### 2.2 Implicit Root
 
 The root `[ ]` is omitted and implicitly treated as `[ ... ]`. The root type is determined by the format of the internal content (an empty file evaluates to an empty array `[]`).
 
@@ -92,7 +87,7 @@ version = 1.0
 'second item'
 ```
 
-### 2.4 Keys
+### 2.3 Keys
 
 Bare, dot (`.`), and quoted (`' '`, `" "`) strings can be used as keys.
 
@@ -118,7 +113,7 @@ service-node-01 = 'active'
 'env=prod' = true
 ```
 
-### 2.5 Key Paths
+### 2.4 Key Paths
 
 Keys within nested objects can be represented in a single line by joining bare or quoted keys directly with a dot (`.`) without whitespace.
 
@@ -140,7 +135,7 @@ project.'v1.0.alpha'.status = active { project=[ 'v1.0.alpha'=[ status=active ] 
 app."user's choice".theme = dark     { app=[ "user's choice"=[ theme=dark ] ] }
 ```
 
-### 2.6 Objects in Arrays
+### 2.5 Objects in Arrays
 
 Within an array, a semicolon (`;`) starts an object without nested brackets, grouping subsequent `key=value` pairs until the next `;`, `>`, standalone value, or `]`.
 
@@ -174,7 +169,7 @@ stages = [
 ]
 ```
 
-### 2.7 Line & Multi-line Strings
+### 2.6 Line & Multi-line Strings
 
 Line (`>`) and multi-line (`<word>`) strings are raw strings used for values.
 
@@ -202,7 +197,7 @@ query = <sql>
   <sql>
 ```
 
-### 2.8 Flow Text
+### 2.7 Flow Text
 
 Within an array, `>` (when not following `=`) starts flow text mode, reading raw text until the closing `]` and splitting it into array elements.
 
@@ -235,7 +230,7 @@ lines = [
 { [ 'First part ' 'second part' '\n' '    indented line' ] }
 ```
 
-### 2.9 Comments
+### 2.8 Comments
 
 Inline and block comments use `{ }`, allowing variable-length braces (e.g., `{{ }}`, `{{{ }}}`) to prevent delimiter collision.
 
@@ -270,7 +265,7 @@ Supports the same data types as JSON.
 
 * **Object**: `[ key=val ]`, `[=]`
 
-## 4. Use Cases
+## 4. JSON Comparison
 
 ### 4.1 Configuration Files
 
@@ -490,4 +485,130 @@ article
     [a ;href=.https://example.com/security target=_blank > security handbook] for secret management.
   ]
 ]
+```
+
+## 5. Extended Examples
+
+### 5.1 Lightweight Markup
+
+**guide.note**
+
+```text
+{ [*]: bold, [_]: italic, [`]: code, [|]: quote, [\ ...]: [...] }
+
+; title = 'Rate Limiting Guide'
+  date  = .2026-11-11
+  tags  = [ api caching security ]
+  draft = false
+
+>
+# Rate Limiting
+
+All public endpoints enforce [* > sliding-window] rate limits [_ > per API key] by default.
+Requests exceeding the quota receive a [* ;style.color=#e53935 > 429 Too Many Requests]
+status. See the [a ;href=.https://example.com/quotas target=_blank > quota policy] for tier limits.
+
+[| > Clients must honor the `Retry-After` header before sending follow-up requests.]
+
+[{ Internal note: enterprise burst limits will double in v2.5 }]
+
+## Request Headers & Payloads
+
+- Standard limits apply to all unauthenticated routes.
+  -- Check `X-RateLimit-Remaining` before retrying failed calls.
+  -- Batch endpoints inspect the first entry via [` 'payload.items[0]'].
+
+[code ;lang=js <js>
+  function getFirstItem(payload) {
+    return payload.items[0] ?? null;
+  }
+  <js>]
+
+## Tier Comparison
+
+[@table ;style.width=.100%
+  { Cells are [ ... ]; single values can omit [ ] }
+  [ Tier        Requests                       Burst ]
+  [ Free        '60 / min'                     10    ]
+  [ Pro         [> 600 / min ([* > default])]  100   ]
+  [ Enterprise  [;colspan=2 'Custom limits']         ]
+]
+
+[---]
+
+- (x) Issue scoped API keys for production
+- ( ) Configure alerting on [\ warn] log events
+
+[@callout ;type=tip
+  > Enable [* > exponential backoff] and cache [_ > idempotent responses] to avoid throttling.
+]
+```
+
+### 5.2 Game Scripts
+
+**narration.note**
+
+```text
+{ [l]: click wait, [r]: newline, [p]: page break }
+>
+[bg ;src=.library.png time=1000]
+[bgm ;src=.rain.ogg loop=true]
+
+The rain had been falling since late afternoon,[l] drumming steadily
+against the tall windows of the old library.[r]
+I stopped in front of the oak door and held my breath.[l][r]
+
+[wait ;time=500]
+[fg ;src=.alice_calm.png pos=center time=300]
+
+Alice looked up from her desk.[l] Her eyes were calm,[l] as if she had
+been waiting in the dim room for hours.[r]
+She closed the heavy ledger and gestured toward the empty chair.[p]
+```
+
+**dialogue.note**
+
+```text
+[bg ;src=.archive.png time=800]
+[fg ;name=alice face=smile pos=center]
+
+[say ;name=Alice
+  > Good morning![l][r]
+  Did you sleep well last night?
+]
+
+[fg ;name=alice face=serious]
+
+[say ;name=Alice
+  > Wait a moment,[l] I found something interesting in the
+  [color ;val=#ff6600 > old archive] yesterday.
+]
+```
+
+### 5.3 Knowledge Graphs
+
+**knowledge_graph.note**
+
+```text
+; @context
+  @vocab = .http://example.org/
+  rdfs = .http://www.w3.org/2000/01/rdf-schema#
+  owl = .http://www.w3.org/2002/07/owl#
+
+[ Entity .owl:Class ]
+[ Person .owl:Class [ .rdfs:subClassOf Entity ] ]
+[ Engineer .owl:Class [ .rdfs:subClassOf Person ] ]
+[ Company .owl:Class [ .rdfs:subClassOf Entity ] ]
+[ knows .owl:ObjectProperty .owl:SymmetricProperty [ .rdfs:domain Person ] [ .rdfs:range Person ] ]
+[ works_at .owl:ObjectProperty [ .rdfs:domain Person ] [ .rdfs:range Company ] ]
+[ claims .owl:ObjectProperty [ .rdfs:domain Person ] ]
+
+[ alice Person Engineer ; name='Alice Smith' age=30
+  [ knows bob ; since=2020 weight=0.9 ]
+  [ works_at acme ; role=lead ]
+]
+[ bob Person ; name='Bob Jones' age=25
+  [ claims [ alice knows bob ] ; confidence=0.95 ]
+]
+[ acme Company ; name='Acme Corp' ]
 ```
