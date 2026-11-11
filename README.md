@@ -53,11 +53,11 @@ health_check.query = <sql>
 
 ## 2. Syntax
 
-Note uses spaces and newlines as delimiters instead of commas (`,`).
-
-### ① Data Structures
+### 2.1 Data Structures
 
 Both arrays and objects use `[ ]`, distinguished by whether they contain an assignment symbol (`=`).
+
+Items are separated by spaces and newlines.
 
 Key-value pairs and standalone values cannot be mixed within the same brackets.
 
@@ -69,7 +69,7 @@ user = [ name='John Doe' occupation='Developer' ]
 skills = [ 'javascript' 'python' 'rust' ]
 ```
 
-### ② Empty Structures
+### 2.2 Empty Structures
 
 Empty arrays and objects are denoted as follows:
 
@@ -78,7 +78,7 @@ arr = [ ]   { JSON: [] }
 obj = [=]   {{ JSON: {} }}
 ```
 
-### ③ Implicit Root
+### 2.3 Implicit Root
 
 The root `[ ]` is omitted and implicitly treated as `[ ... ]`. The root type is determined by the format of the internal content (an empty file evaluates to an empty array `[]`).
 
@@ -92,7 +92,7 @@ version = 1.0
 'second item'
 ```
 
-### ④ Keys
+### 2.4 Keys
 
 Bare, dot (`.`), and quoted (`' '`, `" "`) strings can be used as keys.
 
@@ -118,7 +118,7 @@ service-node-01 = 'active'
 'env=prod' = true
 ```
 
-### ⑤ Key Paths
+### 2.5 Key Paths
 
 Keys within nested objects can be represented in a single line by joining bare or quoted keys directly with a dot (`.`) without whitespace.
 
@@ -140,9 +140,9 @@ project.'v1.0.alpha'.status = active { project=[ 'v1.0.alpha'=[ status=active ] 
 app."user's choice".theme = dark     { app=[ "user's choice"=[ theme=dark ] ] }
 ```
 
-### ⑥ Objects in Arrays
+### 2.6 Objects in Arrays
 
-Within an array, a semicolon (`;`) starts an object without nested brackets, grouping subsequent `key=value` pairs until the next `;`, standalone value, or `]`.
+Within an array, a semicolon (`;`) starts an object without nested brackets, grouping subsequent `key=value` pairs until the next `;`, `>`, standalone value, or `]`.
 
 A `;` object can start with a name key, wrapping subsequent `key=value` pairs under that key.
 
@@ -174,11 +174,11 @@ stages = [
 ]
 ```
 
-### ⑦ Line & Multi-line Strings
+### 2.7 Line & Multi-line Strings
 
 Line (`>`) and multi-line (`<word>`) strings are raw strings used for values.
 
-* **Line String (`>`)**: Reads until the end of the line (`\n`). Trimmed on both sides.
+* **Line String (`>`)**: Used after `=`. Reads until the end of the line (`\n`), trimmed on both sides.
 * **Multi-line String (`<word> ... <word>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
 * **`<word>`**: Can be empty (`<>`) or contain any character except whitespace and `< >` (e.g., `<sql>`, `<md>`, `<##>`).
 
@@ -202,7 +202,40 @@ query = <sql>
   <sql>
 ```
 
-### ⑧ Comments
+### 2.8 Flow Text
+
+Within an array, `>` (when not following `=`) starts flow text mode, reading raw text until the closing `]` and splitting it into array elements.
+
+* **Trimming**: Whitespace immediately after `>`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
+* **Newlines**: The newline immediately after `>` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
+* **Nested `[ ]`**: Parsed as normal Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
+
+```text
+{ Single-line flow text }
+heading = [ h1 > Configuration Guide ]
+{ [ 'h1' 'Configuration Guide' ] }
+
+{ Multi-line flow text with inline structures }
+paragraph = [ p
+  > When the server starts, it looks for a [code .config.note]
+  file in the working directory.
+]
+{ [ 'p' 'When the server starts, it looks for a ' [ 'code' 'config.note' ] '\n' 'file in the working directory.' ] }
+
+{ Literal brackets via [ ] }
+message = [ > System ['[notice]']: Server will restart soon. ]
+{ [ 'System ' [ '[notice]' ] ': Server will restart soon.' ] }
+
+{ Line split via comment and leading spaces via [ ] }
+lines = [
+  > First part [{ comment across
+  lines }]second part
+  []    indented line
+]
+{ [ 'First part ' 'second part' '\n' [ ] '    indented line' ] }
+```
+
+### 2.9 Comments
 
 Inline and block comments use `{ }`, allowing variable-length braces (e.g., `{{ }}`, `{{{ }}}`) to prevent delimiter collision.
 
@@ -239,7 +272,7 @@ Supports the same data types as JSON.
 
 ## 4. Use Cases
 
-### ① Configuration Files
+### 4.1 Configuration Files
 
 **system_config.json**
 
@@ -297,7 +330,7 @@ middlewares = [
 ]
 ```
 
-### ② Log Data
+### 4.2 Log Data
 
 **logs.jsonl**
 
@@ -319,7 +352,7 @@ middlewares = [
 ; time=.2026-11-08T16:00:20 level=debug msg='Cache cleared'
 ```
 
-### ③ Menus
+### 4.3 Menus
 
 **menu.json**
 
@@ -375,7 +408,7 @@ items = [
 ]
 ```
 
-### ④ Documents
+### 4.4 Documents
 
 **article.json**
 
@@ -387,12 +420,14 @@ items = [
     "p",
     "When the server starts, it automatically looks for a ",
     ["code", "config.note"],
-    " file in the working directory and falls back to built-in defaults if none is found."
+    "\n",
+    "file in the working directory and falls back to built-in defaults if none is found."
   ],
   ["h2", "Environment Overrides"],
   [
     "p",
-    "Any setting can be overridden at runtime using environment variables. For example, setting ",
+    "Any setting can be overridden at runtime using environment variables. For example, setting",
+    "\n",
     ["code", "PORT=9000"],
     " overrides the default port ",
     ["b", "8080"],
@@ -404,7 +439,9 @@ items = [
     ["code", "debug"],
     " or ",
     ["code", "info"],
-    ", and relative file paths are resolved from the directory containing the configuration file."
+    ", and relative file",
+    "\n",
+    "paths are resolved from the directory containing the configuration file."
   ],
   [
     "blockquote",
@@ -412,7 +449,9 @@ items = [
       "p",
       "Sensitive credentials such as database passwords should ",
       ["em", "never"],
-      " be committed to version control. Refer to the ",
+      "\n",
+      "be committed to version control. Refer to the",
+      "\n",
       ["a", { "href": "https://example.com/security", "target": "_blank" }, "security handbook"],
       " for secret management."
     ]
@@ -425,30 +464,30 @@ items = [
 ```text
 article
 
-[ h1 'Configuration Guide' ]
+[ h1 > Configuration Guide ]
 
 [ p
-  'When the server starts, it automatically looks for a ' [code .config.note]
-  ' file in the working directory and falls back to built-in defaults if none is found.'
+  > When the server starts, it automatically looks for a [code .config.note]
+  file in the working directory and falls back to built-in defaults if none is found.
 ]
 
-[ h2 'Environment Overrides' ]
+[ h2 > Environment Overrides ]
 
 [ p
-  'Any setting can be overridden at runtime using environment variables. For example, setting '
-  [code 'PORT=9000'] ' overrides the default port ' [b .8080] ' without modifying the file.'
+  > Any setting can be overridden at runtime using environment variables. For example, setting
+  [code 'PORT=9000'] overrides the default port [b .8080] without modifying the file.
 ]
 
 [ p
-  'Log levels accept ' [code debug] ' or ' [code info]
-  ', and relative file paths are resolved from the directory containing the configuration file.'
+  > Log levels accept [code debug] or [code info], and relative file
+  paths are resolved from the directory containing the configuration file.
 ]
 
 [ blockquote
   [ p
-    'Sensitive credentials such as database passwords should ' [em never]
-    ' be committed to version control. Refer to the '
-    [a ;href=.https://example.com/security target=_blank 'security handbook'] ' for secret management.'
+    > Sensitive credentials such as database passwords should [em never]
+    be committed to version control. Refer to the
+    [a ;href=.https://example.com/security target=_blank > security handbook] for secret management.
   ]
 ]
 ```
