@@ -222,11 +222,11 @@ paragraph = [ p
 ]
 { [ 'p' 'When the server starts, it looks for a ' [ 'code' 'config.note' ] '\n' 'file in the working directory.' ] }
 
-{ Literal brackets via [ ] }
+{ Bracket text with ['...'] }
 message = [ > System ['[notice]']: Server will restart soon. ]
 { [ 'System ' [ '[notice]' ] ': Server will restart soon.' ] }
 
-{ Line split via comment and leading spaces via [ ] }
+{ Line split and leading spaces }
 lines = [
   > First part [{ comment across
   lines }]second part
