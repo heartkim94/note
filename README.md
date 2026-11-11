@@ -43,7 +43,7 @@ health_check.query = <sql>
 
 ## 1. Why Note?
 
-* **Easy to Read and Write**: Makes structured data clean and simple to type, with no comma or indentation errors.
+* **Easy to Read and Write**: Makes structured data clean and simple to type, without commas or indentation rules.
 
 * **JSON Compatible**: Shares the same data types and structures as JSON, making it easy to adopt where JSON is used.
 
