@@ -462,7 +462,7 @@ article
 [ h1 > Configuration Guide ]
 
 [ p
-  > When the server starts, it automatically looks for a [code .config.note]
+  > When the server starts, it automatically looks for a [code > config.note]
   file in the working directory and falls back to built-in defaults if none is found.
 ]
 
@@ -470,7 +470,7 @@ article
 
 [ p
   > Any setting can be overridden at runtime using environment variables. For example, setting
-  [code 'PORT=9000'] overrides the default port [b .8080] without modifying the file.
+  [code > PORT=9000] overrides the default port [b > 8080] without modifying the file.
 ]
 
 [ p
@@ -494,7 +494,7 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [`]: code, [|]: quote, [\ ...]: [...] }
+{ [*]: bold, [_]: italic, [`]: code, [|]: quote, [\ ...]: [...], [& ... [url]]: link }
 
 ; title = 'Rate Limiting Guide'
   date  = .2026-11-11
@@ -504,11 +504,11 @@ article
 >
 # Rate Limiting
 
-All public endpoints enforce [* > sliding-window] rate limits [_ > per API key] by default.
+All public endpoints enforce [*> sliding-window] rate limits [_> per API key] by default.
 Requests exceeding the quota receive a [* ;style.color=#e53935 > 429 Too Many Requests]
-status. See the [a ;href=.https://example.com/quotas target=_blank > quota policy] for tier limits.
+status. See the [& ;target=_blank > quota policy [> https://example.com/quotas]] for tier limits.
 
-[| > Clients must honor the `Retry-After` header before sending follow-up requests.]
+[|> Clients must honor the `Retry-After` header before sending follow-up requests.]
 
 [{ Internal note: enterprise burst limits will double in v2.5 }]
 
@@ -530,7 +530,7 @@ status. See the [a ;href=.https://example.com/quotas target=_blank > quota polic
   { Cells are [ ... ]; single values can omit [ ] }
   [ Tier        Requests                       Burst ]
   [ Free        '60 / min'                     10    ]
-  [ Pro         [> 600 / min ([* > default])]  100   ]
+  [ Pro         [> 600 / min ([*> default])]   100   ]
   [ Enterprise  [;colspan=2 'Custom limits']         ]
 ]
 
@@ -540,7 +540,7 @@ status. See the [a ;href=.https://example.com/quotas target=_blank > quota polic
 - ( ) Configure alerting on [\ warn] log events
 
 [@callout ;type=tip
-  > Enable [* > exponential backoff] and cache [_ > idempotent responses] to avoid throttling.
+  > Enable [*> exponential backoff] and cache [_> idempotent responses] to avoid throttling.
 ]
 ```
 
