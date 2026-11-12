@@ -512,15 +512,15 @@ status. See the [& ;target=_blank > quota policy [> https://example.com/quotas]]
 
 [{ Internal note: enterprise burst limits will double in v2.5 }]
 
-## Request Headers & Payloads
+## Response Headers & Retries
 
-- Standard limits apply to all unauthenticated routes.
-  -- Check `X-RateLimit-Remaining` before retrying failed calls.
-  -- Batch endpoints inspect the first entry via [` 'payload.items[0]'].
+- Rate limit status is exposed via standard HTTP headers:
+  -- Check `X-RateLimit-Remaining` to track available quota.
+  -- Read [` "res.headers['retry-after']"] before retrying throttled calls.
 
-[code ;lang=js <js>
-  function getFirstItem(payload) {
-    return payload.items[0] ?? null;
+[@code ;lang=js <js>
+  function getRetryDelay(res) {
+    return Number(res.headers['retry-after'] ?? 1) * 1000;
   }
   <js>]
 
@@ -528,10 +528,10 @@ status. See the [& ;target=_blank > quota policy [> https://example.com/quotas]]
 
 [@table ;style.width=.100%
   { Cells are [ ... ]; single values can omit [ ] }
-  [ Tier        Requests                       Burst ]
-  [ Free        '60 / min'                     10    ]
-  [ Pro         [> 600 / min ([*> default])]   100   ]
-  [ Enterprise  [;colspan=2 'Custom limits']         ]
+  [ Tier        Requests                          Burst ]
+  [ Free        '60 / min'                        10    ]
+  [ Pro         [> 600 / min ([*> recommended])]  100   ]
+  [ Enterprise  [;colspan=2 'Custom limits']            ]
 ]
 
 [---]
