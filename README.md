@@ -494,7 +494,7 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [`]: code, [|]: quote, [\ ...]: [...], [& ... [url]]: link }
+{ [*]: bold, [_]: italic, [`] / `...`: code, [|]: quote, [\ ...]: [...], [& ... [url]]: link }
 
 ; title = 'Rate Limiting Guide'
   date  = .2026-11-11
