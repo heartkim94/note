@@ -203,7 +203,7 @@ Within an array, `>` (when not following `=`) starts flow text mode, reading raw
 
 * **Trimming**: Whitespace immediately after `>`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
 * **Newlines**: The newline immediately after `>` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
-* **Nested `[ ]`**: Parsed as normal Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
+* **Nested `[ ]`**: Parsed as normal Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted. Literal brackets require custom handling.
 
 ```text
 { Single-line flow text }
@@ -217,9 +217,9 @@ paragraph = [ p
 ]
 { [ 'p' 'When the server starts, it looks for a ' [ 'code' 'config.note' ] '\n' 'file in the working directory.' ] }
 
-{ Bracket text with ['...'] }
-message = [ > System ['[notice]']: Server will restart soon. ]
-{ [ 'System ' [ '[notice]' ] ': Server will restart soon.' ] }
+{ Brackets in text }
+prompt = [ > Press [ESC] to cancel. ]
+{ [ 'Press ' [ 'ESC' ] ' to cancel.' ] }
 
 { Line split and leading spaces }
 lines = [
