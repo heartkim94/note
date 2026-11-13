@@ -221,13 +221,14 @@ paragraph = [ p
 prompt = [ > Press [ESC] to cancel. ]
 { [ 'Press ' [ 'ESC' ] ' to cancel.' ] }
 
-{ Line split and leading spaces }
+{ Comments, line split, and leading spaces }
 lines = [
-  > First part [{ comment across
-  lines }]second part
+  > First[{ comment }] line
+  Second [
+  ]line
   []    indented line
 ]
-{ [ 'First part ' 'second part' '\n' '    indented line' ] }
+{ [ 'First' ' line' '\n' 'Second ' 'line' '\n' '    indented line' ] }
 ```
 
 ### 2.8 Comments
@@ -494,7 +495,7 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [`] / `...`: code, [|]: quote, [\ ...]: [...], [& ... [url]]: link }
+{ [*]: bold, [_]: italic, [`] / `...`: code, [|]: quote, [[...]]: [...], [& ... [url]]: link }
 
 ; title = 'Rate Limiting Guide'
   date  = .2026-11-11
@@ -537,7 +538,7 @@ status. See the [& ;target=_blank > quota policy [> https://example.com/quotas]]
 [---]
 
 - (x) Issue scoped API keys for production
-- ( ) Configure alerting on [\ warn] log events
+- ( ) Configure alerting on [[warn]] log events
 
 [@callout ;type=tip
   > Enable [*> exponential backoff] and cache [_> idempotent responses] to avoid throttling.
