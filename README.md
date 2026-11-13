@@ -91,7 +91,7 @@ version = 1.0
 
 Bare, dot (`.`), and quoted (`' '`, `" "`) strings can be used as keys.
 
-Bare strings can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " , :`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
+Bare strings can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " ,`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
 Dot strings (`.`) start with `.` and read a single word as a raw string until following whitespace or `[ ] = ;`.
 
@@ -596,13 +596,13 @@ She closed the heavy ledger and gestured toward the empty chair.[p]
   rdfs = .http://www.w3.org/2000/01/rdf-schema#
   owl = .http://www.w3.org/2002/07/owl#
 
-[ Entity .owl:Class ]
-[ Person .owl:Class [ .rdfs:subClassOf Entity ] ]
-[ Engineer .owl:Class [ .rdfs:subClassOf Person ] ]
-[ Company .owl:Class [ .rdfs:subClassOf Entity ] ]
-[ knows .owl:ObjectProperty .owl:SymmetricProperty [ .rdfs:domain Person ] [ .rdfs:range Person ] ]
-[ works_at .owl:ObjectProperty [ .rdfs:domain Person ] [ .rdfs:range Company ] ]
-[ claims .owl:ObjectProperty [ .rdfs:domain Person ] ]
+[ Entity owl:Class ]
+[ Person owl:Class [ rdfs:subClassOf Entity ] ]
+[ Engineer owl:Class [ rdfs:subClassOf Person ] ]
+[ Company owl:Class [ rdfs:subClassOf Entity ] ]
+[ knows owl:ObjectProperty owl:SymmetricProperty [ rdfs:domain Person ] [ rdfs:range Person ] ]
+[ works_at owl:ObjectProperty [ rdfs:domain Person ] [ rdfs:range Company ] ]
+[ claims owl:ObjectProperty [ rdfs:domain Person ] ]
 
 [ alice Person Engineer ; name='Alice Smith' age=30
   [ knows bob ; since=2020 weight=0.9 ]
