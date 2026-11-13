@@ -495,7 +495,7 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [`] / `...`: code, [|]: quote, [[...]]: [...], [& ... [url]]: link }
+{ [*]: bold, [_]: italic, [|]: quote, [[...]]: [...], [& ... [url]]: link }
 
 ; title = 'Rate Limiting Guide'
   date  = .2026-11-11
@@ -517,9 +517,9 @@ status. See the [& ;target=_blank > quota policy [> https://example.com/quotas]]
 
 - Rate limit status is exposed via standard HTTP headers:
   -- Check `X-RateLimit-Remaining` to track available quota.
-  -- Read [` "res.headers['retry-after']"] before retrying throttled calls.
+  -- Read [code "res.headers['retry-after']"] before retrying throttled calls.
 
-[@code ;lang=js <js>
+[@codeblock ;lang=js <js>
   function getRetryDelay(res) {
     return Number(res.headers['retry-after'] ?? 1) * 1000;
   }
