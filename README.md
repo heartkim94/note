@@ -33,7 +33,7 @@ routes = [
   [ /static ; cache ttl=3600 ; file_server root=/var/www ]
 ]
 
-fallback = [ respond ; status=503 'Service temporarily unavailable' ]
+fallback = [ respond ; status=503 > Service temporarily unavailable ]
 
 health_check.query = <sql>
   SELECT id, status FROM nodes
