@@ -500,51 +500,55 @@ article
 ```text
 { [*]: bold, [_]: italic, [|]: quote, [& ...[url]]: link }
 
-; title = 'Rate Limiting Guide'
+; title = 'Project Layout'
   date  = .2026-11-11
-  tags  = [ api caching security ]
+  tags  = [ structure build guide ]
   draft = false
 
 >
-# Rate Limiting
+# Project Layout
 
-All public endpoints enforce [*> sliding-window] rate limits [_> per API key] by default.
-Requests exceeding the quota receive a [* ;style.color=#e53935 > 429 Too Many Requests]
-status. See the [& ;target=_blank > quota policy[> https://example.com/quotas]] for tier limits.
-
-[|> Clients must honor the `Retry-After` header before sending follow-up requests.]
-
-[{ Internal note: enterprise burst limits will double in v2.5 }]
-
-## Response Headers & Retries
-
-- Rate limit status is exposed via standard HTTP headers:
-  -- Check `X-RateLimit-Remaining` to track available quota.
-  -- Read [code "res.headers['retry-after']"] before retrying throttled calls.
-
-[@codeblock ;lang=js <js>
-  function getRetryDelay(res) {
-    return Number(res.headers['retry-after'] ?? 1) * 1000;
-  }
-  <js>]
-
-## Tier Comparison
+New projects follow a standard folder layout so tools work with [*> zero config].
+Files inside `public/` are copied to the output folder [_> without bundling].
 
 [@table ;style.width=.100%
   { Cells are [ ... ]; single values can omit [ ] }
-  [ Tier        Requests                          Burst ]
-  [ Free        '60 / min'                        10    ]
-  [ Pro         [> 600 / min ([*> recommended])]  100   ]
-  [ Enterprise  [;colspan=2 'Custom limits']            ]
+  [ Directory  Tracked  Purpose                                ]
+  [ src/       yes      [> Application source ([*> required])] ]
+  [ public/    yes      'Static images and fonts'              ]
+  [ dist/      no       'Generated production output'          ]
+]
+
+[|> Files in `dist/` are [* ;style.color=#e53935 > overwritten] on every build and should not be edited by hand.]
+
+## Path & File Conventions
+
+- Import modules with the `@/` alias instead of deep `../` paths:
+  -- Maps `@/components` directly to `src/components`.
+  -- Dynamic route files use brackets, such as `src/pages/[[id]].js`.
+
+[@codeblock ;lang=js <js>
+  import { Header } from '@/components/Header';
+
+  export function Page(params) {
+    return Header(params.id);
+  }
+  <js>]
+
+Keep `.env` files in the root folder; see the [& ;target=_blank > configuration guide[> https://example.com/config]].
+
+[details
+  [summary > Customizing the output folder]
+  > Set `outDir` in `build.config.js` to write production files somewhere other than `dist/`.
 ]
 
 [---]
 
-- (x) Issue scoped API keys for production
-- ( ) Configure alerting on [[warn]] log events
+- (x) Add `dist/` to `.gitignore`
+- ( ) Configure the `@/` alias in your editor
 
 [@callout ;type=tip
-  > Enable [*> exponential backoff] and cache [_> idempotent responses] to avoid throttling.
+  > Pass [*> --clean] when building to remove stale files from `dist/` first.
 ]
 ```
 
@@ -554,38 +558,46 @@ status. See the [& ;target=_blank > quota policy[> https://example.com/quotas]] 
 
 ```text
 { [l]: click wait, [r]: newline, [p]: page break }
+{ Novel style }
 >
 [bg ;src=.library.png time=1000]
 [bgm ;src=.rain.ogg loop=true]
 
 The rain had been falling since late afternoon,[l] drumming steadily
-against the tall windows of the old library.[r]
+against the tall windows of the old library.[l][r]
 I stopped in front of the oak door and held my breath.[l][r]
 
 [wait ;time=500]
 [fg ;src=.alice_calm.png pos=center time=300]
 
 Alice looked up from her desk.[l] Her eyes were calm,[l] as if she had
-been waiting in the dim room for hours.[r]
-She closed the heavy ledger and gestured toward the empty chair.[p]
+been waiting in the dim room for hours.[l][r]
+She closed the heavy ledger and gestured toward the empty chair.[l][r]
+"You're right on time."[p]
 ```
 
 **dialogue.note**
 
 ```text
-[bg ;src=.archive.png time=800]
-[fg ;name=alice face=smile pos=center]
+{ Dialogue-box style }
+[bg ;src=.library.png time=800]
+[fg ;src=.alice_smile.png pos=center]
 
 [say ;name=Alice
-  > Good morning![l][r]
-  Did you sleep well last night?
+  > Thanks for coming out in this rain.[l][r]
+  Did anyone see you on the way here?
 ]
 
-[fg ;name=alice face=serious]
+[fg ;src=.alice_serious.png]
 
 [say ;name=Alice
-  > Wait a moment,[l] I found something interesting in the
-  [color ;val=#ff6600 > old archive] yesterday.
+  > Before you arrived,[l] I found something unusual in the
+  [color #ff6600 > old archive] records.
+]
+
+[choice
+  ; text='Check the records'  goto=check_records
+  ; text='Ask what happened'  goto=ask_details
 ]
 ```
 
