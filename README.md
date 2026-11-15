@@ -203,7 +203,8 @@ Within an array, `>` (when not following `=`) starts flow text mode, reading raw
 
 * **Trimming**: Whitespace immediately after `>`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
 * **Newlines**: The newline immediately after `>` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
-* **Nested `[ ]`**: Parsed as normal Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted. Literal brackets require custom handling.
+* **Nested `[ ]`**: Parsed as Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
+* **Escapes**: `[[ ... ]]` inserts its elements between `"["` and `"]"`, and `[[] ...]` inserts the following elements.
 
 ```text
 { Single-line flow text }
@@ -217,9 +218,11 @@ paragraph = [ p
 ]
 { [ 'p' 'When the server starts, it looks for a ' [ 'code' 'config.note' ] '\n' 'file in the working directory.' ] }
 
-{ Brackets in text }
-prompt = [ > Press [ESC] to cancel. ]
-{ [ 'Press ' [ 'ESC' ] ' to cancel.' ] }
+{ Escapes }
+prompt = [ > Press [[ESC]] to cancel. ]
+{ [ 'Press ' '[' 'ESC' ']' ' to cancel.' ] }
+range = [ > Valid in [[] '[0, 1)'] only. ]
+{ [ 'Valid in ' '[0, 1)' ' only.' ] }
 
 { Comments, line split, and leading spaces }
 lines = [
@@ -495,7 +498,7 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [|]: quote, [[...]]: [...], [& ... [url]]: link }
+{ [*]: bold, [_]: italic, [|]: quote, [& ...[url]]: link }
 
 ; title = 'Rate Limiting Guide'
   date  = .2026-11-11
@@ -507,7 +510,7 @@ article
 
 All public endpoints enforce [*> sliding-window] rate limits [_> per API key] by default.
 Requests exceeding the quota receive a [* ;style.color=#e53935 > 429 Too Many Requests]
-status. See the [& ;target=_blank > quota policy [> https://example.com/quotas]] for tier limits.
+status. See the [& ;target=_blank > quota policy[> https://example.com/quotas]] for tier limits.
 
 [|> Clients must honor the `Retry-After` header before sending follow-up requests.]
 
