@@ -204,7 +204,7 @@ Within an array, `>` (when not following `=`) starts flow text mode, reading raw
 * **Trimming**: Whitespace immediately after `>`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
 * **Newlines**: The newline immediately after `>` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
 * **Nested `[ ]`**: Parsed as Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
-* **Escapes**: `[[ ... ]]` inserts its elements between `"["` and `"]"`, and `[[] ...]` inserts the following elements.
+* **Escapes**: `[= ... =]` reads flow text without nested `[ ]`, allowing variable-length `=` (e.g., `[== ... ==]`). `[[ ... ]]` reads until `]]` as `[=[ ... ]=]`, allowing variable-length brackets (e.g., `[[[ ... ]]]` as `[=[[ ... ]]=]`).
 
 ```text
 { Single-line flow text }
@@ -220,8 +220,8 @@ paragraph = [ p
 
 { Escapes }
 prompt = [ > Press [[ESC]] to cancel. ]
-{ [ 'Press ' '[' 'ESC' ']' ' to cancel.' ] }
-range = [ > Valid in [[] '[0, 1)'] only. ]
+{ [ 'Press ' '[ESC]' ' to cancel.' ] }
+range = [ > Valid in [= [0, 1) =] only. ]
 { [ 'Valid in ' '[0, 1)' ' only.' ] }
 
 { Comments, line split, and leading spaces }
