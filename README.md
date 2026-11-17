@@ -498,7 +498,7 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [>]: quote, [& ...[url]]: link }
+{ [*]: bold, [_]: italic, [>]: quote, [& [text] [url]]: link }
 
 ; title = 'Project Layout'
   date  = .2026-11-11
@@ -535,7 +535,7 @@ Files inside `public/` are copied to the output folder [_| without bundling].
   }
   |js|]
 
-Keep `.env` files in the root folder; see the [& ;target=_blank | configuration guide[| https://example.com/config]].
+Keep `.env` files in the root folder; see the [& ;target=_blank [| configuration guide] [| https://example.com/config]].
 
 [details
   [summary | Customizing the output folder]
