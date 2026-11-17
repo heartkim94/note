@@ -14,7 +14,7 @@ app = [
   name        = 'Cloud Mesh'
   environment = production
   version     = .2.4.0
-  description => Lightweight service proxy
+  description =| Lightweight service proxy
   debug       = false
 ]
 
@@ -33,12 +33,12 @@ routes = [
   [ /static ; cache ttl=3600 ; file_server root=/var/www ]
 ]
 
-fallback = [ respond ; status=503 > Service temporarily unavailable ]
+fallback = [ respond ; status=503 | Service temporarily unavailable ]
 
-health_check.query = <sql>
+health_check.query = |sql|
   SELECT id, status FROM nodes
   WHERE active = true;
-  <sql>
+  |sql|
 ```
 
 ## 1. Why Note?
@@ -47,9 +47,9 @@ health_check.query = <sql>
 
 * **JSON Compatible**: Shares the same data types and structures as JSON, making it easy to adopt where JSON is used.
 
-* **Minimal Keystrokes**: Eliminates commas (`,`), reduces quotes (bare strings, `.`, `>`) and nested brackets (`;`, `.`), and requires no Shift key for core structural symbols (`[ ]`, `=`, `;`, `.`).
+* **Minimal Keystrokes**: Eliminates commas (`,`), reduces quotes (bare strings, `.`, `|`) and nested brackets (`;`, `.`), and requires no Shift key for core structural symbols (`[ ]`, `=`, `;`, `.`).
 
-* **Comments & Multi-line Strings**: Supports inline and block comments (`{ }`) and raw multi-line strings (`<word>`).
+* **Comments & Multi-line Strings**: Supports inline and block comments (`{ }`) and raw multi-line strings (`|word|`).
 
 ## 2. Syntax
 
@@ -91,7 +91,7 @@ version = 1.0
 
 Bare, dot (`.`), and quoted (`' '`, `" "`) strings can be used as keys.
 
-Bare strings can contain any character except whitespace and reserved characters (`[ ] { } < > = ; . ' " ,`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
+Bare strings can contain any character except whitespace and reserved characters (`[ ] { } | = ; . ' " ,`), and cannot start with a digit (or `-` followed by a digit) or match reserved words (`true`, `false`, `nil`).
 
 Dot strings (`.`) start with `.` and read a single word as a raw string until following whitespace or `[ ] = ;`.
 
@@ -137,7 +137,7 @@ app."user's choice".theme = dark     { app=[ "user's choice"=[ theme=dark ] ] }
 
 ### 2.5 Objects in Arrays
 
-Within an array, a semicolon (`;`) starts an object without nested brackets, grouping subsequent `key=value` pairs until the next `;`, `>`, standalone value, or `]`.
+Within an array, a semicolon (`;`) starts an object without nested brackets, grouping subsequent `key=value` pairs until the next `;`, standalone value, or `]`.
 
 A `;` object can start with a name key, wrapping subsequent `key=value` pairs under that key.
 
@@ -171,62 +171,62 @@ stages = [
 
 ### 2.6 Line & Multi-line Strings
 
-Line (`>`) and multi-line (`<word>`) strings are raw strings used for values.
+Line (`|`) and multi-line (`|word|`) strings are raw strings used for values.
 
-* **Line String (`>`)**: Used after `=`. Reads until the end of the line (`\n`), trimmed on both sides.
-* **Multi-line String (`<word> ... <word>`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
-* **`<word>`**: Can be empty (`<>`) or contain any character except whitespace and `< >` (e.g., `<sql>`, `<md>`, `<##>`).
+* **Line String (`|`)**: Used after `=`. Reads until the end of the line (`\n`), trimmed on both sides.
+* **Multi-line String (`|word| ... |word|`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
+* **`|word|`**: Can be empty (`||`) or contain any character except whitespace and `[ ] |` (e.g., `|sql|`, `|md|`, `|##|`).
 
 ```text
-{ Line string (>) }
-notice => Maintenance starts at 02:00. Please save your work.
-format => [{time}] {level}: {message} (user={user}; ip={ip})
+{ Line string (|) }
+notice =| Maintenance starts at 02:00. Please save your work.
+format =| [{time}] {level}: {message} (user={user}; ip={ip})
 
-{ Multi-line string (<word>) }
-quote = <>He said, "It's working!"<>
+{ Multi-line string (|word|) }
+quote = ||He said, "It's working!"||
 
-message = <>
+message = ||
   Hello, World!
   Welcome to Note.
-  <>
+  ||
 
-query = <sql>
+query = |sql|
   SELECT id, name FROM users
   WHERE status = 'active'
     AND role = 'admin';
-  <sql>
+  |sql|
 ```
 
 ### 2.7 Flow Text
 
-Within an array, `>` (when not following `=`) starts flow text mode, reading raw text until the closing `]` and splitting it into array elements.
+Within an array, `|` (when not following `=`) starts flow text mode, reading raw text until the closing `]` and splitting it into array elements.
 
-* **Trimming**: Whitespace immediately after `>`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
-* **Newlines**: The newline immediately after `>` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
+* **Trimming**: Whitespace immediately after `|`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
+* **Newlines**: The newline immediately after `|` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
 * **Nested `[ ]`**: Parsed as Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
 * **Escapes**: `[= ... =]` reads flow text without nested `[ ]`, allowing variable-length `=` (e.g., `[== ... ==]`). `[[ ... ]]` reads until `]]` as `[=[ ... ]=]`, allowing variable-length brackets (e.g., `[[[ ... ]]]` as `[=[[ ... ]]=]`).
 
 ```text
 { Single-line flow text }
-heading = [ h1 > Configuration Guide ]
+heading = [ h1 | Configuration Guide ]
 { [ 'h1' 'Configuration Guide' ] }
 
 { Multi-line flow text with inline structures }
 paragraph = [ p
-  > When the server starts, it looks for a [code .config.note]
+  | When the server starts, it looks for a [code .config.note]
   file in the working directory.
 ]
 { [ 'p' 'When the server starts, it looks for a ' [ 'code' 'config.note' ] '\n' 'file in the working directory.' ] }
 
 { Escapes }
-prompt = [ > Press [[ESC]] to cancel. ]
+prompt = [ | Press [[ESC]] to cancel. ]
 { [ 'Press ' '[ESC]' ' to cancel.' ] }
-range = [ > Valid in [= [0, 1) =] only. ]
+range = [ | Valid in [= [0, 1) =] only. ]
 { [ 'Valid in ' '[0, 1)' ' only.' ] }
 
 { Comments, line split, and leading spaces }
 lines = [
-  > First[{ comment }] line
+  | First[{ comment }] line
   Second [
   ]line
   []    indented line
@@ -256,7 +256,7 @@ port = 443
 
 Supports the same data types as JSON.
 
-* **String**: Bare, `.`, `' '`, `" "`, `>`, `<word>`
+* **String**: Bare, `.`, `' '`, `" "`, `|`, `|word|`
   * Quoted strings (`' '`, `" "`) support escape sequences: `\n`, `\t`, `\r`, `\b`, `\f`, `\'`, `\"`, `\\`, and `\u{x...}` (e.g., `\u{41}`, `\u{1F600}`).
 
 * **Number**: `1024`, `100_000`, `3.14`, `-5`, `1.2e-3`
@@ -463,30 +463,30 @@ items = [
 ```text
 article
 
-[ h1 > Configuration Guide ]
+[ h1 | Configuration Guide ]
 
 [ p
-  > When the server starts, it automatically looks for a [code > config.note]
+  | When the server starts, it automatically looks for a [code | config.note]
   file in the working directory and falls back to built-in defaults if none is found.
 ]
 
-[ h2 > Environment Overrides ]
+[ h2 | Environment Overrides ]
 
 [ p
-  > Any setting can be overridden at runtime using environment variables. For example, setting
-  [code > PORT=9000] overrides the default port [b > 8080] without modifying the file.
+  | Any setting can be overridden at runtime using environment variables. For example, setting
+  [code | PORT=9000] overrides the default port [b | 8080] without modifying the file.
 ]
 
 [ p
-  > Log levels accept [code debug] or [code info], and relative file
+  | Log levels accept [code debug] or [code info], and relative file
   paths are resolved from the directory containing the configuration file.
 ]
 
 [ blockquote
   [ p
-    > Sensitive credentials such as database passwords should [em never]
+    | Sensitive credentials such as database passwords should [em never]
     be committed to version control. Refer to the
-    [a ;href=.https://example.com/security target=_blank > security handbook] for secret management.
+    [a ;href=.https://example.com/security target=_blank | security handbook] for secret management.
   ]
 ]
 ```
@@ -498,28 +498,28 @@ article
 **guide.note**
 
 ```text
-{ [*]: bold, [_]: italic, [|]: quote, [& ...[url]]: link }
+{ [*]: bold, [_]: italic, [>]: quote, [& ...[url]]: link }
 
 ; title = 'Project Layout'
   date  = .2026-11-11
   tags  = [ structure build guide ]
   draft = false
 
->
+|
 # Project Layout
 
-New projects follow a standard folder layout so tools work with [*> zero config].
-Files inside `public/` are copied to the output folder [_> without bundling].
+New projects follow a standard folder layout so tools work with [*| zero config].
+Files inside `public/` are copied to the output folder [_| without bundling].
 
 [@table ;style.width=.100%
   { Cells are [ ... ]; single values can omit [ ] }
   [ Directory  Tracked  Purpose                                ]
-  [ src/       yes      [> Application source ([*> required])] ]
+  [ src/       yes      [| Application source ([*| required])] ]
   [ public/    yes      'Static images and fonts'              ]
   [ dist/      no       'Generated production output'          ]
 ]
 
-[|> Files in `dist/` are [* ;style.color=#e53935 > overwritten] on every build and should not be edited by hand.]
+[>| Files in `dist/` are [* ;style.color=#e53935 | overwritten] on every build and should not be edited by hand.]
 
 ## Path & File Conventions
 
@@ -527,19 +527,19 @@ Files inside `public/` are copied to the output folder [_> without bundling].
   -- Maps `@/components` directly to `src/components`.
   -- Dynamic route files use brackets, such as `src/pages/[[id]].js`.
 
-[@codeblock ;lang=js <js>
+[@codeblock ;lang=js |js|
   import { Header } from '@/components/Header';
 
   export function Page(params) {
     return Header(params.id);
   }
-  <js>]
+  |js|]
 
-Keep `.env` files in the root folder; see the [& ;target=_blank > configuration guide[> https://example.com/config]].
+Keep `.env` files in the root folder; see the [& ;target=_blank | configuration guide[| https://example.com/config]].
 
 [details
-  [summary > Customizing the output folder]
-  > Set `outDir` in `build.config.js` to write production files somewhere other than `dist/`.
+  [summary | Customizing the output folder]
+  | Set `outDir` in `build.config.js` to write production files somewhere other than `dist/`.
 ]
 
 [---]
@@ -548,7 +548,7 @@ Keep `.env` files in the root folder; see the [& ;target=_blank > configuration 
 - ( ) Configure the `@/` alias in your editor
 
 [@callout ;type=tip
-  > Pass [*> --clean] when building to remove stale files from `dist/` first.
+  | Pass [*| --clean] when building to remove stale files from `dist/` first.
 ]
 ```
 
@@ -559,7 +559,7 @@ Keep `.env` files in the root folder; see the [& ;target=_blank > configuration 
 ```text
 { [l]: click wait, [r]: newline, [p]: page break }
 { Novel style }
->
+|
 [bg ;src=.library.png time=1000]
 [bgm ;src=.rain.ogg loop=true]
 
@@ -584,15 +584,15 @@ She closed the heavy ledger and gestured toward the empty chair.[l][r]
 [fg ;src=.alice_smile.png pos=center]
 
 [say ;name=Alice
-  > Thanks for coming out in this rain.[l][r]
+  | Thanks for coming out in this rain.[l][r]
   Did anyone see you on the way here?
 ]
 
 [fg ;src=.alice_serious.png]
 
 [say ;name=Alice
-  > Before you arrived,[l] I found something unusual in the
-  [color #ff6600 > old archive] records.
+  | Before you arrived,[l] I found something unusual in the
+  [color #ff6600 | old archive] records.
 ]
 
 [choice
