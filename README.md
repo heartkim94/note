@@ -358,55 +358,54 @@ middlewares = [
 **menu.json**
 
 ```json
-{
-  "title": "Main Menu",
-  "items": [
-    {
-      "label": "File",
-      "items": [
-        { "label": "New File", "command": "file.new", "shortcut": "Ctrl+N" },
-        { "label": "Save", "command": "file.save", "shortcut": "Ctrl+S" },
-        {
-          "label": "Export",
-          "items": [
-            { "label": "PDF", "command": "export.pdf" },
-            { "label": "HTML", "command": "export.html" }
-          ]
-        }
-      ]
-    },
-    {
-      "label": "Help",
-      "items": [
-        { "label": "Documentation", "url": "/docs" },
-        { "label": "About", "command": "app.about" }
-      ]
-    }
-  ]
-}
+[
+  {
+    "label": "File",
+    "submenu": [
+      { "label": "New File", "command": "file.new", "shortcut": "Ctrl+N" },
+      { "label": "Save", "command": "file.save", "shortcut": "Ctrl+S" },
+      {
+        "label": "Export",
+        "submenu": [
+          { "label": "PDF", "command": "export.pdf" },
+          { "label": "HTML", "command": "export.html" }
+        ]
+      },
+      { "type": "separator" },
+      { "label": "Quit", "command": "app.quit", "shortcut": "Ctrl+Q" }
+    ]
+  },
+  {
+    "label": "Help",
+    "submenu": [
+      { "label": "Documentation", "url": "/docs" },
+      { "label": "About", "command": "app.about" }
+    ]
+  }
+]
 ```
 
 **menu.note**
 
 ```text
-title = 'Main Menu'
-items = [
-  ; label = File
-    items = [
-      ; label='New File' command=.file.new  shortcut=Ctrl+N
-      ; label=Save       command=.file.save shortcut=Ctrl+S
-      ; label = Export
-        items = [
-          ; label=PDF  command=.export.pdf
-          ; label=HTML command=.export.html
-        ]
-    ]
-  ; label = Help
-    items = [
-      ; label=Documentation url=/docs
-      ; label=About         command=.app.about
-    ]
-]
+; label = File
+  submenu = [
+    ; label='New File' command=.file.new  shortcut=Ctrl+N
+    ; label=Save       command=.file.save shortcut=Ctrl+S
+    ; label = Export
+      submenu = [
+        ; label=PDF  command=.export.pdf
+        ; label=HTML command=.export.html
+      ]
+    ; type=separator
+    ; label=Quit       command=.app.quit  shortcut=Ctrl+Q
+  ]
+
+; label = Help
+  submenu = [
+    ; label=Documentation url=/docs
+    ; label=About         command=.app.about
+  ]
 ```
 
 ### 4.4 Documents
