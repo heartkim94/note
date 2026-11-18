@@ -203,8 +203,8 @@ query = |sql|
 
 Within an array, `|` (when not following `=`) starts text mode, reading raw text until the closing `]` and splitting it into array elements.
 
-* **Trimming**: Whitespace immediately after `|`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
-* **Newlines**: The newline immediately after `|` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
+* **Trimming**: Spaces and tabs immediately after `|`, before the closing `]`, and around each newline are trimmed; other inline whitespace is preserved, and empty text segments are omitted.
+* **Newlines**: After trimming, a leading newline after `|` and a trailing newline before `]` are ignored. Each remaining newline is inserted as a standalone `"\n"` element (normalized to `\n`).
 * **Nested `[ ]`**: Parsed as Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
 * **Escapes**: `[= ... =]` reads in text mode without nested `[ ]`, allowing variable-length `=` (e.g., `[== ... ==]`). `[[ ... ]]` reads until `]]` as `[=[ ... ]=]`, allowing variable-length brackets (e.g., `[[[ ... ]]]` as `[=[[ ... ]]=]`).
 
