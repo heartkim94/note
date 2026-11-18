@@ -49,7 +49,9 @@ health_check.query = |sql|
 
 * **Minimal Keystrokes**: Eliminates commas (`,`), reduces quotes (bare strings, `.`, `|`) and nested brackets (`;`, `.`), and requires no Shift key for core structural symbols (`[ ]`, `=`, `;`, `.`).
 
-* **Comments & Multi-line Strings**: Supports inline and block comments (`{ }`) and raw multi-line strings (`|word|`).
+* **Comments & Multi-line Text**: Supports inline and block comments (`{ }`), raw multi-line strings (`|word|`), and text mode (`|`) with inline structures.
+
+* **Flexible Syntax**: Represents structured data, expressions, and prose.
 
 ## 2. Syntax
 
@@ -197,21 +199,21 @@ query = |sql|
   |sql|
 ```
 
-### 2.7 Flow Text
+### 2.7 Text Mode
 
-Within an array, `|` (when not following `=`) starts flow text mode, reading raw text until the closing `]` and splitting it into array elements.
+Within an array, `|` (when not following `=`) starts text mode, reading raw text until the closing `]` and splitting it into array elements.
 
 * **Trimming**: Whitespace immediately after `|`, before the closing `]`, and around each newline is trimmed; other inline spaces are preserved, and empty text segments are omitted.
 * **Newlines**: The newline immediately after `|` and before the closing `]` is ignored. Each internal newline is inserted as a standalone `"\n"` element (normalized to `\n`).
 * **Nested `[ ]`**: Parsed as Note structures and inserted between text elements; empty arrays (`[ ]`) are omitted.
-* **Escapes**: `[= ... =]` reads flow text without nested `[ ]`, allowing variable-length `=` (e.g., `[== ... ==]`). `[[ ... ]]` reads until `]]` as `[=[ ... ]=]`, allowing variable-length brackets (e.g., `[[[ ... ]]]` as `[=[[ ... ]]=]`).
+* **Escapes**: `[= ... =]` reads in text mode without nested `[ ]`, allowing variable-length `=` (e.g., `[== ... ==]`). `[[ ... ]]` reads until `]]` as `[=[ ... ]=]`, allowing variable-length brackets (e.g., `[[[ ... ]]]` as `[=[[ ... ]]=]`).
 
 ```text
-{ Single-line flow text }
+{ Single-line text mode }
 heading = [ h1 | Configuration Guide ]
 { [ 'h1' 'Configuration Guide' ] }
 
-{ Multi-line flow text with inline structures }
+{ Multi-line text mode with inline structures }
 paragraph = [ p
   | When the server starts, it looks for a [code .config.note]
   file in the working directory.
@@ -552,7 +554,7 @@ Keep `.env` files in the root folder; see the [& ;target=_blank [| configuration
 ]
 ```
 
-### 5.2 Game Scripts
+### 5.2 Narrative Scripts
 
 **narration.note**
 
