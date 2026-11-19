@@ -175,7 +175,7 @@ stages = [
 
 Line (`|`) and multi-line (`|word|`) strings are raw strings used for values.
 
-* **Line String (`|`)**: Used after `=`. Reads until the end of the line (`\n`), trimmed on both sides.
+* **Line String (`|`)**: Used after `=`. Reads until an unmatched `]` or the end of the line (`\n`), trimmed on both sides (balanced `[ ]` pairs are included).
 * **Multi-line String (`|word| ... |word|`)**: Leading whitespace up to the closing delimiter's indentation is stripped from each line, the newline after the opening delimiter and before the closing delimiter is ignored, and line endings are normalized to `\n`.
 * **`|word|`**: Can be empty (`||`) or contain any character except whitespace and `[ ] |` (e.g., `|sql|`, `|md|`, `|##|`).
 
@@ -183,6 +183,7 @@ Line (`|`) and multi-line (`|word|`) strings are raw strings used for values.
 { Line string (|) }
 notice =| Maintenance starts at 02:00. Please save your work.
 format =| [{time}] {level}: {message} (user={user}; ip={ip})
+banner = [ type=info text =| Press [ESC] to dismiss ]
 
 { Multi-line string (|word|) }
 quote = ||He said, "It's working!"||
